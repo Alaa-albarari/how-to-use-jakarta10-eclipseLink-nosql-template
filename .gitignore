@@ -1,0 +1,3 @@
+target/
+mongo-data
+.mvn/wrapper/maven-wrapper.jar
