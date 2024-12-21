@@ -1,6 +1,7 @@
 
 
 package com.albarari.jakarta.service;
+import com.albarari.jakarta.config.MongoDBConfig;
 import com.albarari.jakarta.entity.Car;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -12,7 +13,7 @@ import jakarta.persistence.Persistence;
 @ApplicationScoped
 public class CarService {
 
-    private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("mongoPU");
+    private final EntityManagerFactory entityManagerFactory = MongoDBConfig.createEntityManagerFactory();
     public Car getCarById(String id) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {

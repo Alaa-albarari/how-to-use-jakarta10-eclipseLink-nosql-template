@@ -47,14 +47,14 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>2.0</version>
+			<version>2.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
-			<version>4.0.4</version>
+			<version>4.0.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-xjc -->
@@ -77,25 +77,23 @@
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.nosql</artifactId>
-			<version>5.0.0-B04</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.mongodb</groupId>
-					<artifactId>mongodb-driver</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>4.0.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver-sync</artifactId>
-			<version>5.1.4</version>
+			<version>4.0.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver-core</artifactId>
-			<version>5.1.4</version>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.12.14</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
+
+
+		<!-- https://mvnrepository.com/artifact/com.mongodb/mongo-driver -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>bson</artifactId>

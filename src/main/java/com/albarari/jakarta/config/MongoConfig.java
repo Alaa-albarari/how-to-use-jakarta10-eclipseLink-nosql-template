@@ -13,7 +13,7 @@ public class MongoConfig {
 
     public static MongoConfig getConfig() {
         Yaml yaml = new Yaml();
-        try (InputStream input = MongoConfig.class.getClassLoader().getResourceAsStream("mongo-config.yaml")) {
+        try (InputStream input = MongoConfig.class.getClassLoader().getResourceAsStream("application-config.yaml")) {
             Map<String, Object> config = yaml.load(input);
             Map<String, Object> mongodb = (Map<String, Object>) config.get("mongodb");
 
