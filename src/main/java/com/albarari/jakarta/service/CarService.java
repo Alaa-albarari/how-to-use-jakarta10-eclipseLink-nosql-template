@@ -1,46 +1,32 @@
-
-
 package com.albarari.jakarta.service;
-import com.albarari.jakarta.config.MongoDBConfig;
+
 import com.albarari.jakarta.entity.Car;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.EntityManager;
-
+import com.albarari.jakarta.repository.CarRepository;
 import java.util.List;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.inject.Inject;
 
-@ApplicationScoped
+@jakarta.enterprise.context.ApplicationScoped
 public class CarService {
 
-    private final EntityManagerFactory entityManagerFactory = MongoDBConfig.createEntityManagerFactory();
+    @Inject
+    private CarRepository carRepository;
+
+    public CarService() {
+        // Default constructor for CDI
+    }
+    public Car saveCar(Car car) {
+        return carRepository.save(car);
+    }
+
     public Car getCarById(String id) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            return entityManager.find(Car.class, id);
-        } finally {
-            entityManager.close();
-        }
+        return carRepository.findById(id);
     }
 
     public List<Car> getAllCars() {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            return entityManager.createQuery("SELECT c FROM Car c", Car.class).getResultList();
-        } finally {
-            entityManager.close();
-        }
+        return carRepository.findAll();
     }
 
-    public Car addCar(Car car) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        try {
-            entityManager.getTransaction().begin();
-            entityManager.persist(car);
-            entityManager.getTransaction().commit();
-            return car;
-        } finally {
-            entityManager.close();
-        }
+    public void deleteCarById(String id) {
+        carRepository.deleteById(id);
     }
 }

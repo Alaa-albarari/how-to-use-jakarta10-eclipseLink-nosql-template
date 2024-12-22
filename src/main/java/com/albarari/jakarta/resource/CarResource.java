@@ -22,10 +22,7 @@ public class CarResource {
     @Path("/{id}")
     public Response getCarById(@PathParam("id") String id) {
         try {
-            // Convert the string id to ObjectId
-//            ObjectId objectId = new ObjectId(id);
             Car car = carService.getCarById(id);
-
             if (car == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -47,7 +44,7 @@ public class CarResource {
     // Add a new car
     @POST
     public Response addCar(Car car) {
-        Car createdCar = carService.addCar(car);
+        Car createdCar = carService.saveCar(car);
         return Response.status(Response.Status.CREATED).entity(createdCar).build();
     }
 }
