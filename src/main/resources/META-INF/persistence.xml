@@ -6,10 +6,10 @@
             <!-- MongoDB Configuration for EclipseLink -->
             <property name="eclipselink.target-database" value="org.eclipse.persistence.nosql.adapters.mongo.MongoPlatform" />
             <property name="eclipselink.nosql.connection-spec" value="org.eclipse.persistence.nosql.adapters.mongo.Mongo3ConnectionSpec" />
-            <property name="eclipselink.logging.level" value="FINE" />
-            <property name="eclipselink.logging.parameters" value="true" />
-            <property name="eclipselink.ddl-generation" value="none" />
-            <property name="eclipselink.ddl-generation.output-mode" value="none" />
+<!--            <property name="eclipselink.logging.level" value="FINE" />-->
+<!--            <property name="eclipselink.logging.parameters" value="true" />-->
+<!--            <property name="eclipselink.ddl-generation" value="none" />-->
+<!--            <property name="eclipselink.ddl-generation.output-mode" value="none" />-->
         </properties>
     </persistence-unit>
 </persistence>

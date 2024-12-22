@@ -1,33 +1,40 @@
 package com.albarari.jakarta.config;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
-import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+/**
+ * Configuration class for loading MongoDB settings using ConfigLoader.
+ */
 public class MongoConfig {
+    private static final Logger logger = LogManager.getLogger(MongoConfig.class);
+
     private String host;
     private int port;
     private String database;
     private String username;
     private String password;
 
+    /**
+     * Loads the MongoDB configuration using ConfigLoader.
+     *
+     * @return the MongoConfig instance with loaded settings
+     * @throws RuntimeException if the configuration cannot be loaded
+     */
     public static MongoConfig getConfig() {
-        Yaml yaml = new Yaml();
-        try (InputStream input = MongoConfig.class.getClassLoader().getResourceAsStream("application-config.yaml")) {
-            Map<String, Object> config = yaml.load(input);
-            Map<String, Object> mongodb = (Map<String, Object>) config.get("mongodb");
+        logger.info("Loading MongoDB configuration");
+        AppConfig.MongoDBConfig mongoConfig = ConfigLoader.getInstance().getConfig().getMongodb();
 
-            MongoConfig mongoConfig = new MongoConfig();
-            mongoConfig.host = (String) mongodb.get("host");
-            mongoConfig.port = (Integer) mongodb.get("port");
-            mongoConfig.database = (String) mongodb.get("database");
-            mongoConfig.username = (String) mongodb.get("username");
-            mongoConfig.password = (String) mongodb.get("password");
+        MongoConfig config = new MongoConfig();
+        config.host = mongoConfig.getHost();
+        config.port = mongoConfig.getPort();
+        config.database = mongoConfig.getDatabase();
+        config.username = mongoConfig.getUsername();
+        config.password = mongoConfig.getPassword();
 
-            return mongoConfig;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load MongoDB configuration", e);
-        }
+        logger.info("MongoDB configuration loaded: host={}, port={}, database={}",
+                    config.host, config.port, config.database);
+        return config;
     }
 
     // Getters

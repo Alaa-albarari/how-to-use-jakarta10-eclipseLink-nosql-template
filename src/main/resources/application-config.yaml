@@ -1,6 +1,7 @@
+# MongoDB configuration settings
 mongodb:
-  host: localhost
-  port: 27017
-  database: carsdb
-  username: root
-  password: example
+  host: localhost  # The hostname of the MongoDB server
+  port: 27017      # The port number on which MongoDB is running
+  database: carsdb # The name of the MongoDB database to use
+  username: root   # The username for authenticating with MongoDB
+  password: example # The password for authenticating with MongoDB
