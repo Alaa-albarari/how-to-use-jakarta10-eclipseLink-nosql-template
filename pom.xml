@@ -38,11 +38,6 @@
 			<version>${jakartaee-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>org.eclipse.persistence.moxy</artifactId>
-			<version>3.0.4</version>
-		</dependency>
 		<!-- YAML Parser -->
 		<dependency>
 			<groupId>org.yaml</groupId>
@@ -50,7 +45,6 @@
 			<version>2.1</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
@@ -59,86 +53,46 @@
 
 		<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-xjc -->
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-xjc</artifactId>
-			<version>4.0.5</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>4.0.5</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.xml.bind</groupId>
-			<artifactId>jakarta.xml.bind-api</artifactId>
-			<version>4.0.2</version>
-		</dependency>
-		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.nosql</artifactId>
 			<version>4.0.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync -->
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver-sync</artifactId>
-			<version>4.0.1</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.mongodb</groupId>-->
+<!--			<artifactId>mongodb-driver-sync</artifactId>-->
+<!--			<version>4.0.1</version>-->
+<!--		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
 			<version>3.12.14</version>
 		</dependency>
-
-
-		<!-- https://mvnrepository.com/artifact/com.mongodb/mongo-driver -->
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>bson</artifactId>
 			<version>5.1.4</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.18.2</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>2.18.2</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>2.18.2</version>
-		</dependency>
-
-
-		<!-- https://mvnrepository.com/artifact/jakarta.json.bind/jakarta.json.bind-api -->
-		<dependency>
-			<groupId>jakarta.json.bind</groupId>
-			<artifactId>jakarta.json.bind-api</artifactId>
-			<version>3.0.1</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.parsson/parsson -->
-		<dependency>
-			<groupId>org.eclipse.parsson</groupId>
-			<artifactId>parsson</artifactId>
-			<version>1.1.7</version>
-		</dependency>
 	</dependencies>
+
 
 	<build>
 		<finalName>jakartaee-hello-world</finalName>
 		<plugins>
 			<!-- Maven Compiler Plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.5.0</version> <!-- Use the latest version -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>analyze</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
