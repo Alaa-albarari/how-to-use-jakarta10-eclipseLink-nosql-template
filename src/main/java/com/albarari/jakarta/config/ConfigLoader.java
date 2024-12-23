@@ -6,11 +6,11 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.io.InputStream;
 
-/**
- * Singleton class for loading application configuration from a YAML file.
- */
+@ApplicationScoped
 public class ConfigLoader {
     private static final Logger logger = LogManager.getLogger(ConfigLoader.class);
     private static ConfigLoader instance;
@@ -20,11 +20,6 @@ public class ConfigLoader {
         loadConfig();
     }
 
-    /**
-     * Returns the singleton instance of ConfigLoader.
-     *
-     * @return the singleton instance of ConfigLoader
-     */
     public static ConfigLoader getInstance() {
         if (instance == null) {
             instance = new ConfigLoader();
@@ -32,33 +27,52 @@ public class ConfigLoader {
         return instance;
     }
 
-    /**
-     * Loads the application configuration from the `application-config.yaml` file.
-     *
-     * @throws RuntimeException if the configuration file cannot be loaded or parsed
-     */
     private void loadConfig() {
         LoaderOptions loaderOptions = new LoaderOptions();
         Constructor constructor = new Constructor(AppConfig.class, loaderOptions);
         Yaml yaml = new Yaml(constructor);
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application-config.yaml")) {
+
+        String activeProfile = getActiveProfile();
+        String configFileName = "application-" + activeProfile + ".yaml";
+        logger.info("Active profile: {}", activeProfile);
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(configFileName)) {
             if (input == null) {
-                throw new RuntimeException("Could not find application-config.yaml");
+                throw new RuntimeException("Could not find " + configFileName);
             }
             config = yaml.load(input);
             validateConfig(config.getMongodb());
-            logger.info("Configuration loaded successfully");
+            logger.info("Configuration loaded successfully for profile: {}", activeProfile);
         } catch (Exception e) {
             logger.error("Failed to load configuration", e);
             throw new RuntimeException("Failed to load configuration", e);
         }
     }
 
-    /**
-     * Validates the MongoDB configuration properties.
-     *
-     * @param mongoConfig the MongoDB configuration to validate
-     */
+    public String getActiveProfile() {
+
+        // Check for system property
+        String profile = System.getProperty("active.profile");
+        if (profile != null) {
+            logger.debug("Profile found from system property: {}", profile);
+        }
+
+
+        // Check for environment variable
+        if (profile == null || profile.isEmpty()) {
+            profile = System.getenv("APP_PROFILE");
+            if (profile != null) {
+                logger.debug("Profile found from environment variable: {}", profile);
+            }
+        }
+
+        // Fallback to default
+        if (profile == null || profile.isEmpty()) {
+            profile = "development";
+            logger.warn("No profile specified. Falling back to default profile: {}", profile);
+        }
+        return profile;
+    }
+
     private void validateConfig(AppConfig.MongoDBConfig mongoConfig) {
         if (mongoConfig.getHost() == null || mongoConfig.getHost().isEmpty()) {
             throw new IllegalArgumentException("MongoDB host is not configured");
@@ -77,11 +91,6 @@ public class ConfigLoader {
         }
     }
 
-    /**
-     * Returns the loaded application configuration.
-     *
-     * @return the loaded application configuration
-     */
     public AppConfig getConfig() {
         return config;
     }
