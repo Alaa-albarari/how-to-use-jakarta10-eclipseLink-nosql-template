@@ -1,13 +1,13 @@
 package com.albarari.jakarta.repository;
 
-import com.albarari.jakarta.entity.Car;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.albarari.jakarta.config.MongoDBConfig;
+import com.albarari.jakarta.entity.Car;
+import org.bson.types.ObjectId;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository class for managing Car entities.
@@ -15,75 +15,64 @@ import java.util.List;
 @ApplicationScoped
 public class CarRepository {
 
-    private static final Logger logger = LogManager.getLogger(CarRepository.class);
-
-    private EntityManager em;
+    private final EntityManagerFactory emf;
 
     /**
-     * Default constructor for CDI.
+     * Constructor to initialize the CarRepository with an EntityManagerFactory.
      */
     public CarRepository() {
-        // Default constructor for CDI
+        this.emf = MongoDBConfig.createEntityManagerFactory();
     }
 
     /**
-     * Constructor with EntityManagerFactory injection.
+     * Saves a Car entity to the database.
      *
-     * @param emf the EntityManagerFactory to create EntityManager
-     */
-    @Inject
-    public CarRepository(EntityManagerFactory emf) {
-        this.em = emf.createEntityManager();
-    }
-
-    /**
-     * Saves a new Car entity or updates an existing one.
-     *
-     * @param car the Car entity to save or update
-     * @return the saved or updated Car entity
+     * @param car the Car entity to save
+     * @return the saved Car entity
      */
     public Car save(Car car) {
-        logger.info("Saving car: {}", car);
-        em.getTransaction().begin(); // Start a manual transaction
-        if (car.getId() == null || em.find(Car.class, car.getId()) == null) {
-            em.persist(car);
-            logger.info("Car persisted: {}", car);
-        } else {
-            car = em.merge(car);
-            logger.info("Car merged: {}", car);
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            if (car.getId() != null && em.find(Car.class, car.getId()) != null) {
+                car = em.merge(car);
+            } else {
+                em.persist(car);
+            }
+            em.getTransaction().commit();
+            return car;
+        } finally {
+            em.close();
         }
-        em.getTransaction().commit(); // Commit the transaction
-        logger.info("Transaction committed for car: {}", car);
-        return car;
     }
 
     /**
      * Finds a Car entity by its ID.
      *
-     * @param id the ID of the Car entity to find
-     * @return the found Car entity, or null if not found
+     * @param id the ID of the Car entity
+     * @return an Optional containing the found Car entity, or empty if not found
      */
-    public Car findById(String id) {
-        logger.info("Finding car by ID: {}", id);
-        Car car = em.find(Car.class, id);
-        if (car != null) {
-            logger.info("Car found: {}", car);
-        } else {
-            logger.warn("Car not found with ID: {}", id);
+    public Car findById(ObjectId id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Car.class, id);
+        } finally {
+            em.close();
         }
-        return car;
     }
 
     /**
-     * Finds all Car entities.
+     * Retrieves all Car entities from the database.
      *
      * @return a list of all Car entities
      */
     public List<Car> findAll() {
-        logger.info("Finding all cars");
-        List<Car> cars = em.createQuery("SELECT c FROM Car c", Car.class).getResultList();
-        logger.info("Found {} cars", cars.size());
-        return cars;
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery("SELECT c FROM Car c", Car.class).getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     /**
@@ -91,17 +80,17 @@ public class CarRepository {
      *
      * @param id the ID of the Car entity to delete
      */
-    public void deleteById(String id) {
-        logger.info("Deleting car by ID: {}", id);
-        em.getTransaction().begin();
-        Car car = em.find(Car.class, id);
-        if (car != null) {
-            em.remove(car);
-            logger.info("Car removed: {}", car);
-        } else {
-            logger.warn("Car not found with ID: {}", id);
+    public void deleteById(ObjectId id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Car car = em.find(Car.class, id);
+            if (car != null) {
+                em.remove(car);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
         }
-        em.getTransaction().commit();
-        logger.info("Transaction committed for car deletion with ID: {}", id);
     }
 }

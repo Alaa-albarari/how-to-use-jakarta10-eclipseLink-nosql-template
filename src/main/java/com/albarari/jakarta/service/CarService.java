@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
 
 /**
  * Service class for managing Car entities.
@@ -47,7 +48,7 @@ public class CarService {
      */
     public Car getCarById(String id) {
         logger.info("Retrieving car with ID: {}", id);
-        Car car = carRepository.findById(id);
+        Car car = carRepository.findById(new ObjectId(id));
         if (car != null) {
             logger.info("Car retrieved: {}", car);
         } else {
@@ -75,7 +76,7 @@ public class CarService {
      */
     public void deleteCarById(String id) {
         logger.info("Deleting car with ID: {}", id);
-        carRepository.deleteById(id);
+        carRepository.deleteById(new ObjectId(id));
         logger.info("Car deleted with ID: {}", id);
     }
 }

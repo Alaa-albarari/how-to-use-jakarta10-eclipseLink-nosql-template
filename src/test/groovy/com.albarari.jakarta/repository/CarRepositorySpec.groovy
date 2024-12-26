@@ -1,9 +1,6 @@
 package com.albarari.jakarta.repository
 
 import spock.lang.Specification
-import jakarta.persistence.EntityManager
-import jakarta.persistence.EntityManagerFactory
-import com.albarari.jakarta.config.MongoDBConfig
 import com.albarari.jakarta.entity.Car
 import org.bson.types.ObjectId
 
@@ -12,30 +9,25 @@ import org.bson.types.ObjectId
  */
 class CarRepositorySpec extends Specification {
 
-    EntityManagerFactory emf
-    EntityManager em
     CarRepository carRepository
+    List<ObjectId> insertedCarIds = []
 
     /**
-     * Sets up the test environment by creating an EntityManagerFactory and EntityManager.
+     * Sets up the test environment by initializing the CarRepository.
      */
     def setup() {
-        // Create an EntityManagerFactory for testing
-        emf = MongoDBConfig.createEntityManagerFactory() // Use your persistence unit name
-        em = emf.createEntityManager()
-
-        // Pass the EntityManager to the repository
+        // Initialize the repository
         carRepository = new CarRepository()
-        carRepository.em = em // Manually inject the EntityManager
     }
 
     /**
-     * Cleans up the test environment by closing the EntityManager and EntityManagerFactory.
+     * Cleans up the test environment by deleting inserted cars.
      */
     def cleanup() {
-        // Close EntityManager and EntityManagerFactory after tests
-        if (em.isOpen()) em.close()
-        if (emf.isOpen()) emf.close()
+        // Delete only the cars inserted by the test
+        insertedCarIds.each { id ->
+            carRepository.deleteById(id)
+        }
     }
 
     /**
@@ -43,10 +35,11 @@ class CarRepositorySpec extends Specification {
      */
     def "should save a new car and retrieve it by ID"() {
         given: "a new car to persist"
-        def car = new Car(id: new ObjectId().toHexString(), make: "Toyota", model: "Corolla", year: "2023")
+        def car = new Car(id: new ObjectId(), make: "Toyota", model: "Corolla", year: "2023")
 
         when: "saving the car"
         def savedCar = carRepository.save(car)
+        insertedCarIds.add(savedCar.id)
 
         then: "the car is successfully saved and retrievable"
         def retrievedCar = carRepository.findById(car.id)
@@ -61,8 +54,9 @@ class CarRepositorySpec extends Specification {
      */
     def "should update an existing car"() {
         given: "an existing car in the repository"
-        def car = new Car(id: new ObjectId().toHexString(), make: "Honda", model: "Civic", year: "2022")
+        def car = new Car(id: new ObjectId(), make: "Honda", model: "Civic", year: "2022")
         carRepository.save(car)
+        insertedCarIds.add(car.id)
 
         when: "updating the car's details"
         car.make = "Updated Honda"
@@ -80,10 +74,12 @@ class CarRepositorySpec extends Specification {
      */
     def "should retrieve all cars"() {
         given: "multiple cars saved in the repository"
-        def car1 = new Car(id: new ObjectId().toHexString(), make: "Ford", model: "Focus", year: "2020")
-        def car2 = new Car(id: new ObjectId().toHexString(), make: "Chevrolet", model: "Malibu", year: "2021")
+        def car1 = new Car(id: new ObjectId(), make: "Ford", model: "Focus", year: "2020")
+        def car2 = new Car(id: new ObjectId(), make: "Chevrolet", model: "Malibu", year: "2021")
         carRepository.save(car1)
         carRepository.save(car2)
+        insertedCarIds.add(car1.id)
+        insertedCarIds.add(car2.id)
 
         when: "retrieving all cars"
         def cars = carRepository.findAll()
@@ -99,8 +95,9 @@ class CarRepositorySpec extends Specification {
      */
     def "should delete a car by ID"() {
         given: "a car saved in the repository"
-        def car = new Car(id: new ObjectId().toHexString(), make: "Tesla", model: "Model S", year: "2022")
+        def car = new Car(id: new ObjectId(), make: "Tesla", model: "Model S", year: "2022")
         carRepository.save(car)
+        insertedCarIds.add(car.id)
 
         when: "deleting the car"
         carRepository.deleteById(car.id)
