@@ -23,7 +23,7 @@ public class MongoConfig {
      */
     public static MongoConfig getConfig() {
         logger.info("Loading MongoDB configuration");
-        AppConfig.MongoDBConfig mongoConfig = ConfigLoader.getInstance().getConfig().getMongodb();
+        AppConfig.Mongodb mongoConfig = ConfigLoader.getInstance().getConfig().getMongodb();
 
         MongoConfig config = new MongoConfig();
         config.host = mongoConfig.getHost();

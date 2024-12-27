@@ -1,5 +1,6 @@
 package com.albarari.jakarta.repository
 
+import com.albarari.jakarta.config.MongoDBConfig
 import spock.lang.Specification
 import com.albarari.jakarta.entity.Car
 import org.bson.types.ObjectId
@@ -16,8 +17,10 @@ class CarRepositorySpec extends Specification {
      * Sets up the test environment by initializing the CarRepository.
      */
     def setup() {
-        // Initialize the repository
-        carRepository = new CarRepository()
+        def mongoDBConfig = new MongoDBConfig()
+
+        // Initialize the repository with the Mongodb
+        carRepository = new CarRepository(mongoDBConfig)
     }
 
     /**

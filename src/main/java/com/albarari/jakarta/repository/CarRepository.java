@@ -1,8 +1,10 @@
 package com.albarari.jakarta.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.transaction.Transactional;
 import com.albarari.jakarta.config.MongoDBConfig;
 import com.albarari.jakarta.entity.Car;
@@ -13,16 +15,20 @@ import java.util.List;
  * Repository class for managing Car entities.
  */
 @ApplicationScoped
-@Transactional
 public class CarRepository {
 
     private final EntityManagerFactory emf;
 
+    public CarRepository() {
+        this.emf = null; // or initialize as needed
+    }
+
     /**
      * Constructor to initialize the CarRepository with an EntityManagerFactory.
      */
-    public CarRepository() {
-        this.emf = MongoDBConfig.createEntityManagerFactory();
+    @Inject
+    public CarRepository(MongoDBConfig mongoDBConfig) {
+        this.emf = mongoDBConfig.createEntityManagerFactory();
     }
 
     /**
@@ -31,19 +37,23 @@ public class CarRepository {
      * @param car the Car entity to save
      * @return the saved Car entity
      */
+    @Transactional
     public Car save(Car car) {
         EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
         try {
-            em.getTransaction().begin();
+            transaction.begin();
             if (car.getId() != null && em.find(Car.class, car.getId()) != null) {
                 car = em.merge(car);
             } else {
                 em.persist(car);
             }
-            em.getTransaction().commit();
+            transaction.commit();
             return car;
-        } catch (RuntimeException e) {
-            em.getTransaction().rollback();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             throw e;
         } finally {
             em.close();
@@ -56,6 +66,7 @@ public class CarRepository {
      * @param id the ID of the Car entity
      * @return the found Car entity, or null if not found
      */
+    @Transactional
     public Car findById(ObjectId id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -70,6 +81,7 @@ public class CarRepository {
      *
      * @return a list of all Car entities
      */
+    @Transactional
     public List<Car> findAll() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -84,17 +96,21 @@ public class CarRepository {
      *
      * @param id the ID of the Car entity to delete
      */
+    @Transactional
     public void deleteById(ObjectId id) {
         EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
         try {
-            em.getTransaction().begin();
+            transaction.begin();
             Car car = em.find(Car.class, id);
             if (car != null) {
                 em.remove(car);
             }
-            em.getTransaction().commit();
-        } catch (RuntimeException e) {
-            em.getTransaction().rollback();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             throw e;
         } finally {
             em.close();

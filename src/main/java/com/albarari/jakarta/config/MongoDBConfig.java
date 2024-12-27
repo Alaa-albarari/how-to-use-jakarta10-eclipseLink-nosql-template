@@ -1,5 +1,6 @@
 package com.albarari.jakarta.config;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import java.util.Map;
 /**
  * Configuration class for setting up the MongoDB connection using EclipseLink.
  */
+@ApplicationScoped
 public class MongoDBConfig {
 
     private static final Logger logger = LogManager.getLogger(MongoDBConfig.class);
@@ -19,11 +21,11 @@ public class MongoDBConfig {
      *
      * @return the EntityManagerFactory configured for MongoDB
      */
-    public static EntityManagerFactory createEntityManagerFactory() {
+    public  EntityManagerFactory createEntityManagerFactory() {
         try {
             logger.info("Loading MongoDB configuration");
             // Load MongoDB configuration dynamically (e.g., from YAML or environment variables)
-            AppConfig.MongoDBConfig mongoConfig = ConfigLoader.getInstance().getConfig().getMongodb();
+            AppConfig.Mongodb mongoConfig = ConfigLoader.getInstance().getConfig().getMongodb();
 
             // Define EclipseLink properties dynamically
             Map<String, Object> overrides = new HashMap<>();

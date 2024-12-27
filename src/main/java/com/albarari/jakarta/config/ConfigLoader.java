@@ -6,7 +6,6 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.InputStream;
 
@@ -73,7 +72,7 @@ public class ConfigLoader {
         return profile;
     }
 
-    private void validateConfig(AppConfig.MongoDBConfig mongoConfig) {
+    private void validateConfig(AppConfig.Mongodb mongoConfig) {
         if (mongoConfig.getHost() == null || mongoConfig.getHost().isEmpty()) {
             throw new IllegalArgumentException("MongoDB host is not configured");
         }
