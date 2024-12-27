@@ -6,6 +6,7 @@ import com.albarari.jakarta.entity.Car;
 import com.albarari.jakarta.mapper.CarMapper;
 import com.albarari.jakarta.service.CarService;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -28,8 +29,7 @@ public class CarResource {
     @Inject
     private CarService carService;
 
-    @Inject
-    private CarMapper carMapper;
+    private static final CarMapper carMapper = CarMapper.INSTANCE;
 
     /**
      * Retrieves a Car entity by its ID.
@@ -83,6 +83,7 @@ public class CarResource {
      * @return a Response containing the created Car entity
      */
     @POST
+    @Transactional
     public Response addCar(CarDto carDto) {
         logger.info("Adding new car: {}", carDto);
         Car car = carMapper.carDtoToCar(carDto);
