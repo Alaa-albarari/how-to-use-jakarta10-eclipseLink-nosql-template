@@ -3,16 +3,17 @@ package com.albarari.jakarta.repository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.transaction.Transactional;
 import com.albarari.jakarta.config.MongoDBConfig;
 import com.albarari.jakarta.entity.Car;
 import org.bson.types.ObjectId;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Repository class for managing Car entities.
  */
 @ApplicationScoped
+@Transactional
 public class CarRepository {
 
     private final EntityManagerFactory emf;
@@ -41,6 +42,9 @@ public class CarRepository {
             }
             em.getTransaction().commit();
             return car;
+        } catch (RuntimeException e) {
+            em.getTransaction().rollback();
+            throw e;
         } finally {
             em.close();
         }
@@ -50,7 +54,7 @@ public class CarRepository {
      * Finds a Car entity by its ID.
      *
      * @param id the ID of the Car entity
-     * @return an Optional containing the found Car entity, or empty if not found
+     * @return the found Car entity, or null if not found
      */
     public Car findById(ObjectId id) {
         EntityManager em = emf.createEntityManager();
@@ -89,6 +93,9 @@ public class CarRepository {
                 em.remove(car);
             }
             em.getTransaction().commit();
+        } catch (RuntimeException e) {
+            em.getTransaction().rollback();
+            throw e;
         } finally {
             em.close();
         }
